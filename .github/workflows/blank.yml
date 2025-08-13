@@ -16,23 +16,24 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install TA-Lib (amd64)
+      - name: Install TA-Lib from source
         run: |
+          sudo apt-get update
           sudo apt-get install -y build-essential wget tar
           wget -q https://github.com/ta-lib/ta-lib/releases/download/v0.6.4/ta-lib-0.6.4-src.tar.gz
           tar -xzf ta-lib-0.6.4-src.tar.gz
           cd ta-lib-0.6.4
-
-          ./configure
+          ./configure --prefix=/usr
           make
           sudo make install
-         
+          echo "TA_LIBRARY_PATH=/usr/lib" >> $GITHUB_ENV
+          echo "TA_INCLUDE_PATH=/usr/include" >> $GITHUB_ENV
+
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install Cython
           pip install --no-cache-dir --no-binary ta-lib ta-lib
-          pip install ta-lib
           pip install freqtrade
 
       - name: Download Binance Data
