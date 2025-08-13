@@ -1,0 +1,31 @@
+name: Freqtrade Data Download
+
+on:
+  workflow_dispatch:  # لتشغيله يدويًا من GitHub
+
+jobs:
+  download_data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Freqtrade
+        run: |
+          python -m pip install --upgrade pip
+          pip install freqtrade[full]
+
+      - name: Download Binance Data
+        run: |
+          freqtrade download-data \
+            --timeframes 15m \
+            --exchange binance \
+            --pairs ETH/USDT ETH/BTC XRP/USDT BTC/USDT XRP/ETH \
+            --prepend \
+            --timerange 20210101-20250101
